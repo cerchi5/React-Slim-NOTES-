@@ -29,7 +29,6 @@ class Notes extends Component {
     }
 
     render() {
-        console.log(this.state);
 
         return (
             <div>
@@ -71,16 +70,17 @@ class Notes extends Component {
 
     componentWillMount() {
 
-        fetch(`http://localhost:8000/api/${this.state.username}`)
-            .then(data => data.json())
+        fetch(`http://localhost:8000/api/${this.state.user.username}`)
+            .then(data => {
+                console.log(data.json());
+                return data.json()})
             .then(data => {
                 this.setState({
-                    priorityNotes: data.priorityNotes,
-                    noPriorityNotes: data.noPriorityNotes
-                }, () => {
-                    console.log(this.state);
+                    priorityNotes: data.priorityNotes
+                    // noPriorityNotes: data.noPriorityNotes
                 })
             })
+            .catch(err => {console.log(err)})
     }
 
 }
