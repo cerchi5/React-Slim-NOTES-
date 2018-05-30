@@ -5,6 +5,9 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
 import onClickOutside from "react-onclickoutside";
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import { Grid } from '@material-ui/core';
 
 const styles = {
     card: {
@@ -37,6 +40,7 @@ class AddNoteForm extends Component {
         this.state = {
             title: '',
             content: '',
+            priority: false,
             show: false
         }
     }
@@ -49,13 +53,28 @@ class AddNoteForm extends Component {
                 <CardContent>
 
                     {this.state.show ?
-                        <Input
-                            value={this.state.title}
-                            onChange={(event) => this.setState({ title: event.target.value })}
-                            disableUnderline
-                            placeholder="Title"
-                            style={styles.title}
-                        />
+                        <Grid container>
+                            <Grid item xs={11}>
+                                <Input
+                                    value={this.state.title}
+                                    onChange={(event) => this.setState({ title: event.target.value })}
+                                    disableUnderline
+                                    placeholder="Title"
+                                    style={styles.title}
+                                /></Grid>
+                            <Grid item xs={1}>
+                                <FormControlLabel style={{ marginTop: '-0.5rem', marginLeft: 0 }}
+                                    control={
+                                        <Checkbox
+                                            checked={this.state.priority}
+                                            onChange={event => this.setState({ priority: event.target.checked })}
+                                            color="primary"
+                                        />
+                                    }
+                                // label="Priority"
+                                />
+                            </Grid>
+                        </Grid>
                         : null}
 
                     <Input
@@ -70,14 +89,14 @@ class AddNoteForm extends Component {
                 </CardContent>
                 {this.state.show ?
                     <CardActions style={styles.cardFooter}>
-                        <Button
+                        {/* <Button
                             size="small"
                             onClick={this.addNote}
                             variant="raised"
                             color="primary"
                         >
                             Add Note
-                        </Button>
+                        </Button> */}
                     </CardActions>
                     : null}
             </Card>
@@ -85,6 +104,11 @@ class AddNoteForm extends Component {
     }
 
     addNote = (event) => {
+        if (this.state.title !== '' ||
+            this.state.content !== '') {
+            this.props.addNote(this.state);
+        }
+
         this.setState({ title: '', content: '' });
 
         setTimeout(() => {
@@ -97,10 +121,14 @@ class AddNoteForm extends Component {
     }
 
     handleClickOutside = evt => {
-        if (this.state.title === '' &&
-            this.state.content === '') {
-            this.setState({ show: false })
+        if (this.state.title !== '' ||
+            this.state.content !== '') {
+
+            this.props.addNote(this.state);
+            this.setState({ title: '', content: '', priority: false, show: false })
         }
+
+        this.setState({ title: '', content: '', priority: false, show: false });
     };
 
 }

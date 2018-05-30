@@ -7,6 +7,9 @@ import Typography from '@material-ui/core/Typography';
 import EditNoteForm from './editNoteForm';
 import Dialog from '@material-ui/core/Dialog';
 import yellow from '@material-ui/core/colors/yellow';
+import Grid from '@material-ui/core/Grid';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 const styles = theme => ({
     card: {
@@ -51,9 +54,25 @@ class Note extends Component {
             <Card className={classes.card}>
 
                 <CardContent className={classes.cardContent} onClick={this.handleOpen}>
-                    <Typography className={classes.title} variant="title">
-                        {this.state.title}
-                    </Typography>
+                    <Grid container>
+                        <Grid item xs={11}>
+                            <Typography className={classes.title} variant="title">
+                                {this.state.title}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={1}>
+                            <FormControlLabel style={{ marginTop: '-0.5rem', marginLeft: 0 }}
+                                control={
+                                    <Checkbox
+                                        checked={this.state.priority}
+                                        onChange={event => this.setState({ priority: event.target.checked })}
+                                        color="primary"
+                                        name="checkbox"
+                                    />
+                                }
+                            />
+                        </Grid>
+                    </Grid>
                     <Typography>
                         {this.state.content}
                     </Typography>
@@ -69,8 +88,7 @@ class Note extends Component {
 
                     <EditNoteForm
                         handleClose={this.handleClose}
-                        title={this.state.title}
-                        content={this.state.content}
+                        {...this.state}
                         saveNote={this.saveNote}
                         deleteNote={this.deleteNote}
                     />
@@ -84,12 +102,16 @@ class Note extends Component {
     componentWillReceiveProps(props) {
         if (props.title !== this.state.title ||
             props.content !== this.state.content) {
-                this.setState({ ...props });
-            }
+            this.setState({ ...props });
+        }
     }
 
-    handleOpen = () => {
-        this.setState({ open: true });
+    handleOpen = (event) => {
+        if(event.target.name === 'checkbox'){
+            this.props.updateNotePriority(this.state);
+        } else {
+            this.setState({ open: true })
+        }
     };
 
     handleClose = () => {
@@ -102,8 +124,8 @@ class Note extends Component {
         this.handleClose();
     }
 
-    deleteNote = (id) => {
-        // TODO: Delete note by id
+    deleteNote = (note) => {
+        this.props.deleteNote(note);
 
         this.handleClose();
     }

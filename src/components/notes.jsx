@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types'
 import { Typography, Grid } from '@material-ui/core';
 import Note from './note';
+import AddNoteForm from '../components/addNoteForm';
 
 const styles = {
     container: {
@@ -23,15 +24,25 @@ class Notes extends Component {
             user: {
                 username: this.props.username
             },
-            priorityNotes: [],
-            noPriorityNotes: [],
+            priorityNotes: [{
+                id: 1,
+                title: 'asdf',
+                content: 'asdfasdf',
+                priority: true
+            }],
+            noPriorityNotes: [{
+                id: 3,
+                title: 'Without',
+                content: 'Prio',
+                priority: false
+            }],
         }
     }
 
     render() {
-
         return (
             <div>
+                <AddNoteForm addNote={this.addNote}/>
                 <Grid container justify="center">
                     <Grid container style={styles.container} spacing={16}>
                         <Grid item xs={12}>
@@ -44,7 +55,9 @@ class Notes extends Component {
                         {this.state.priorityNotes.map((note, index) => {
                             return (
                                 <Grid item xs={true} key={index}>
-                                    <Note {...note} />
+                                    <Note {...note}
+                                    updateNotePriority={this.updateNotePriority}
+                                    deleteNote={this.deleteNote}/>
                                 </Grid>
                             )
                         })}
@@ -58,7 +71,9 @@ class Notes extends Component {
                         {this.state.noPriorityNotes.map((note, index) => {
                             return (
                                 <Grid item xs={true} key={index}>
-                                    <Note {...note} />
+                                    <Note {...note}
+                                    updateNotePriority={this.updateNotePriority}
+                                    deleteNote={this.deleteNote}/>
                                 </Grid>
                             )
                         })}
@@ -70,25 +85,73 @@ class Notes extends Component {
 
     componentWillMount() {
 
-        fetch(`http://localhost:8000/api/${this.state.user.username}`)
-            .then(data => {
-                console.log(data.json());
-                return data.json()})
+        fetch(`http://localhost:8000/api/${this.state.username}`)
+            .then(data => data.json())
             .then(data => {
                 this.setState({
-                    priorityNotes: data.priorityNotes
-                    // noPriorityNotes: data.noPriorityNotes
+                    priorityNotes: data.priorityNotes,
+                    noPriorityNotes: data.noPriorityNotes
+                }, () => {
+                    console.log(this.state);
                 })
             })
-            .catch(err => {console.log(err)})
     }
 
-}
+    addNote = (note) => {
 
-Notes.propTypes = {
-    userName: PropTypes.string.isRequired,
-    password: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired
+        // TODO Post Request AddNote
+        console.log(note);
+
+        if(note.priority){
+            let priorityNotes = this.state.priorityNotes;
+            priorityNotes.unshift(note);
+            this.setState({ priorityNotes })
+        } else {
+            let noPriorityNotes = this.state.noPriorityNotes;
+            noPriorityNotes.unshift(note);
+            this.setState({ noPriorityNotes })
+        }
+    }
+
+    deleteNote = (note) => {
+
+        // TODO: DELETE API
+
+        if(note.priority){
+            let priorityNotes = this.state.priorityNotes.filter(x => x.id !== note.id);
+
+            this.setState({ priorityNotes })
+        } else {
+            let noPriorityNotes = this.state.noPriorityNotes.filter(x => x.id !== note.id)
+
+            this.setState({ noPriorityNotes })
+        }
+    }
+
+    updateNotePriority = (note) => {
+        if(note.priority){
+            let priorityNotes = this.state.priorityNotes.filter(noteToBeFound => noteToBeFound.id !== note.id);
+            this.setState({ priorityNotes });
+
+            let noPriorityNotes = this.state.noPriorityNotes;
+            note.priority = false;
+            noPriorityNotes.unshift(note);
+            this.setState({ noPriorityNotes });
+
+            // TODO REQUEST CHANGE PRIORITY
+        } else {
+            let noPriorityNotes = this.state.noPriorityNotes.filter(noteToBeFound => noteToBeFound.id !== note.id);
+            this.setState({ noPriorityNotes });
+
+            let priorityNotes = this.state.priorityNotes;
+            note.priority = true;
+            priorityNotes.unshift(note);
+            this.setState({ priorityNotes });
+
+            // TODO REQUEST CHANGE PRIORITY
+        }
+    }
+
 }
 
 export default Notes;

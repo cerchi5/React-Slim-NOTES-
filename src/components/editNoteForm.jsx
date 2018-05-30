@@ -92,8 +92,7 @@ class EditNoteForm extends Component {
     }
 
     deleteNote = () => {
-        // this.props.deleteNote(this.state.id); TODO update id
-        this.props.deleteNote(3);
+        this.props.deleteNote(this.state);
     }
 
 }

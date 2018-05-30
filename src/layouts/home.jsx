@@ -9,7 +9,6 @@ const Home = (props) => {
         <div>
             <Navbar />
             <div style={{ paddingTop: '3rem' }}>
-                <AddNoteForm />
                 <Notes {...props} />
             </div>
         </div>
