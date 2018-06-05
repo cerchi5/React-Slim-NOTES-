@@ -6,10 +6,18 @@ import Index from './layouts';
 
 
 const Auth = {
-  isAuthenticated: false,
-  authenticate(callback) {
-    this.isAuthenticated = true;
-    setTimeout(callback, 100);
+  isUserRegistered(username, password) {
+    //  TODO: CHECK ACCOUNT VALIDATION
+
+    // fetch(`http://localhost:8000/api/login/${username}/${password}`)
+    // .then(data => data.json()){
+
+    // }
+    return false;
+  },
+  register(username, password, email) {
+    // TODO: REGISTER THE DUDE
+    return true;
   },
   signOut(callback) {
     this.isAuthenticated = false;
@@ -26,9 +34,29 @@ function timeout(ms) {
 const PrivateRoute = ({ component: Component, ...rest }) => {
   return (
     <Route {...rest} render={(props) => (
-      props.match.params.username
-        ? <Component {...props} username={props.match.params.username} />
+      Auth.isUserRegistered(props.match.params.username, props.match.params.password) === false
+        // ? <Component {...props} path="/home/" username={props.match.params.username} />
+        ? <Redirect to={`/home/${props.match.params.username}`} />
         : <Redirect to='/index' />
+    )} />
+  )
+}
+
+const SecondPrivateRoute = ({ component: Component, ...rest }) => {
+  return (
+    <Route {...rest} render={(props) => (
+      <Component {...props} username={props.match.params.username} />
+    )} />
+  )
+}
+
+const RegisterPrivateRoute = ({ ...rest }) => {
+  return (
+    <Route {...rest} render={props => (
+      Auth.register(props.match.params.username, props.match.params.password,
+        props.match.params.email) === true
+        ? <Redirect to={`/home/${props.match.params.username}`} />
+        : <Redirect to="/index" />
     )} />
   )
 }
@@ -40,8 +68,9 @@ class App extends Component {
         <div className="App">
           <Route path="/" strict exact component={Index} />
           <Route path="/index" component={Index} />
-          <Route path="/register" component={Register} />
-          <PrivateRoute path="/home/:username" component={Home} />
+          <PrivateRoute path="/home/:username/:password" strict component={Home} />
+          <SecondPrivateRoute path="/home/:username" strict component={Home} />
+          <RegisterPrivateRoute path="/register/:username/:password/:email" strict />
         </div>
       </Router>
     );

@@ -42,7 +42,7 @@ class EditNoteForm extends Component {
         }
     }
 
-    render() {
+    render(props) {
 
         const { classes } = this.props;
 

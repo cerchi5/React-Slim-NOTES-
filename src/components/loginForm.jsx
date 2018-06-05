@@ -53,7 +53,7 @@ class LoginForm extends Component {
                     fullWidth
                     color="primary"
                     variant="raised"
-                    href={`/home/${this.state.username}`}
+                    href={`/home/${this.state.username}/${this.state.password}`}
                 >
                     Press to login
                 </Button>

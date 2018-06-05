@@ -12,18 +12,15 @@ const styles = {
 };
 
 class RegisterForm extends Component {
-    state = {
-        name: 'Cat in the Hat',
-        age: '',
-        multiline: 'Controlled',
-        currency: 'EUR',
-    };
-
-    handleChange = name => event => {
-        this.setState({
-            [name]: event.target.value,
-        });
-    };
+    constructor() {
+        super();
+        
+        this.state = {
+            username: '',
+            email: '',
+            password: ''
+        }
+    }
 
     render() {
         const { classes } = this.props;
@@ -38,6 +35,8 @@ class RegisterForm extends Component {
                     className={classes.textField}
                     margin="normal"
                     fullWidth
+                    onChange={event => this.setState({ email: event.target.value })}
+                    value={this.state.email}
                 />
                 <TextField
                     label="Username"
@@ -45,6 +44,7 @@ class RegisterForm extends Component {
                     autoComplete="current-password"
                     margin="normal"
                     fullWidth
+                    onChange={event => this.setState({ username: event.target.value })}
                 />
                 <TextField
                     label="Password"
@@ -53,8 +53,14 @@ class RegisterForm extends Component {
                     autoComplete="current-password"
                     margin="normal"
                     fullWidth
+                    onChange={event => this.setState({ password: event.target.value })}
                 />
-                <Button style={styles.button} fullWidth color="secondary" variant="raised">
+                <Button
+                style={styles.button}
+                fullWidth
+                color="secondary"
+                variant="raised"
+                href={`/register/${this.state.username}/${this.state.password}/${this.state.email}`}>
                     Sign up
                 </Button>
             </div>

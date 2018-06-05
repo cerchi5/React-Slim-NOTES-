@@ -47,7 +47,7 @@ class Note extends Component {
         }
     }
 
-    render() {
+    render(props) {
         const { classes } = this.props;
 
         return (
@@ -120,6 +120,7 @@ class Note extends Component {
 
     saveNote = (note) => {
         // TODO: Save the changed note
+        this.setState({ ...note });
 
         this.handleClose();
     }
