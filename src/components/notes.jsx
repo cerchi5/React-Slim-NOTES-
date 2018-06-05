@@ -84,8 +84,8 @@ class Notes extends Component {
     }
 
     componentWillMount() {
-
-        fetch(`http://localhost:8000/api/${this.state.username}`)
+        console.log(this.state.user.username);
+        fetch(`http://localhost:8000/api/${this.state.user.username}`)
             .then(data => data.json())
             .then(data => {
                 this.setState({
@@ -100,6 +100,10 @@ class Notes extends Component {
     addNote = (note) => {
 
         // TODO Post Request AddNote
+        fetch(`http://localhost:8000/api/${this.state.user.username}/add/${note.title}/${note.content}/${note.priority}`,
+        {
+            method:"POST"
+        });
         console.log(note);
 
         if(note.priority){
@@ -116,6 +120,11 @@ class Notes extends Component {
     deleteNote = (note) => {
 
         // TODO: DELETE API
+        fetch(`http://localhost:8000/api/${this.state.user.username}/delete/${note.id}`,
+        {
+            method:"POST"
+        });
+        console.log(note);
 
         if(note.priority){
             let priorityNotes = this.state.priorityNotes.filter(x => x.id !== note.id);
